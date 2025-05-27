@@ -13,12 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Copy repo files directly (static site, no build step)
       - name: Prepare dev deploy folder
         run: |
           rm -rf deploy/dev
           mkdir -p deploy/dev
-          cp -r ./* deploy/dev/
+          rsync -av --exclude='deploy' ./ deploy/dev/
           rm -rf deploy/dev/.git deploy/dev/.github
 
       - name: Deploy dev to subfolder
@@ -36,12 +35,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Copy repo files directly (static site, no build step)
       - name: Prepare prod deploy folder
         run: |
           rm -rf deploy/prod
           mkdir -p deploy/prod
-          cp -r ./* deploy/prod/
+          rsync -av --exclude='deploy' ./ deploy/prod/
           rm -rf deploy/prod/.git deploy/prod/.github
 
       - name: Deploy main to root
