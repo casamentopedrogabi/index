@@ -12,23 +12,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Prepare dev deploy folder
+        run: |
+          rm -rf deploy/dev
+          mkdir -p deploy/dev
+          rsync -av --exclude='deploy' ./ deploy/dev/
+          rm -rf deploy/dev/.git deploy/dev/.github
+
       - name: Deploy dev to subfolder
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GH_PAT}}
-          publish_dir: .
+          github_token: ${{ secrets.GH_PAT }}
+          publish_dir: deploy/dev
           publish_branch: gh-pages
           destination_dir: dev
-          
+          keep_files: true
+
   deploy-main:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Prepare prod deploy folder
+        run: |
+          rm -rf deploy/prod
+          mkdir -p deploy/prod
+          rsync -av --exclude='deploy' ./ deploy/prod/
+          rm -rf deploy/prod/.git deploy/prod/.github
+
       - name: Deploy main to root
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GH_PAT}}
-          publish_dir: .
+          github_token: ${{ secrets.GH_PAT }}
+          publish_dir: deploy/prod
           publish_branch: gh-pages
           destination_dir: ''
+          keep_files: true
