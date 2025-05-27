@@ -13,22 +13,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Optional: install dependencies if needed
-      # - run: npm install
-
-      - name: Build dev version
+      # Copy repo files directly (static site, no build step)
+      - name: Prepare dev deploy folder
         run: |
-          mkdir -p build/dev
-          # Assuming your build command generates 'build' folder here, uncomment next line if needed
-          # npm run build
-          cp -r build/* build/dev/
-          rm -rf build/dev/.git build/dev/.github
+          rm -rf deploy/dev
+          mkdir -p deploy/dev
+          cp -r ./* deploy/dev/
+          rm -rf deploy/dev/.git deploy/dev/.github
 
       - name: Deploy dev to subfolder
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_PAT }}
-          publish_dir: build/dev
+          publish_dir: deploy/dev
           publish_branch: gh-pages
           destination_dir: dev
           keep_files: true
@@ -39,22 +36,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Optional: install dependencies if needed
-      # - run: npm install
-
-      - name: Build prod version
+      # Copy repo files directly (static site, no build step)
+      - name: Prepare prod deploy folder
         run: |
-          mkdir -p build/prod
-          # Uncomment next line if you have a build command
-          # npm run build
-          cp -r build/* build/prod/
-          rm -rf build/prod/.git build/prod/.github
+          rm -rf deploy/prod
+          mkdir -p deploy/prod
+          cp -r ./* deploy/prod/
+          rm -rf deploy/prod/.git deploy/prod/.github
 
       - name: Deploy main to root
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_PAT }}
-          publish_dir: build/prod
+          publish_dir: deploy/prod
           publish_branch: gh-pages
           destination_dir: ''
           keep_files: true
