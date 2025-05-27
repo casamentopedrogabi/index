@@ -2429,43 +2429,26 @@ configurarBotaoParaModalPix('botao80', 80.00);
  * Force replace src of the specific image every 500ms.
  */
 function forceReplaceImageSrc() {
+ /**
+ * Force replace src of the specific image to local file '1.png' every 500ms.
+ */
+function forceReplaceImageSrcSimple() {
+  // Original full src URL to identify the image
   const originalSrc = "https://static.wixstatic.com/media/5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c~mv2.png/v1/fill/w_1960,h_1880,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c~mv2.png";
-  
+
   setInterval(() => {
+    // Find image by exact src match
     const img = document.querySelector(`img[src="${originalSrc}"]`);
-    if (img) {
-      try {
-        const url = new URL(img.src);
-        const newSrc = '1.png' + url.pathname + url.search + url.hash;
-        if (img.src !== newSrc) {
-          img.src = newSrc;
-          console.log('Forced image src replacement:', newSrc);
-        }
-      } catch (e) {
-        console.error('Invalid URL:', img.src);
-      }
-    } else {
-      // If image not found by exact src, try to find by partial match (optional)
-      const imgs = [...document.querySelectorAll('img')];
-      const partialImg = imgs.find(i => i.src.includes('5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c'));
-      if (partialImg) {
-        try {
-          const url = new URL(partialImg.src);
-          const newSrc = '1.png' + url.pathname + url.search + url.hash;
-          if (partialImg.src !== newSrc) {
-            partialImg.src = newSrc;
-            console.log('Forced partial match image src replacement:', newSrc);
-          }
-        } catch (e) {
-          console.error('Invalid URL:', partialImg.src);
-        }
-      }
+    if (img && img.src !== window.location.origin + '/1.png') {
+      img.src = '1.png';  // Replace src with local file '1.png' in same folder as index.html
+      console.log('Image src replaced with local 1.png');
     }
   }, 500);
 }
 
-// Run the force replace
-forceReplaceImageSrc();
+// Run the function
+forceReplaceImageSrcSimple();
+
 
 </script>
 
