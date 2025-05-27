@@ -12,23 +12,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      # Optional: install deps if your project needs it
+      # - run: npm install
+
+      - name: Build dev version
+        run: |
+          mkdir -p build/dev
+          cp -r * build/dev
+          rm -rf build/dev/.git build/dev/.github
+
       - name: Deploy dev to subfolder
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GH_PAT}}
-          publish_dir: .
+          github_token: ${{ secrets.GH_PAT }}
+          publish_dir: build/dev
           publish_branch: gh-pages
           destination_dir: dev
-          
+          keep_files: true
+
   deploy-main:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      # Optional: install deps if needed
+      # - run: npm install
+
+      - name: Build prod version
+        run: |
+          mkdir -p build/prod
+          cp -r * build/prod
+          rm -rf build/prod/.git build/prod/.github
+
       - name: Deploy main to root
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GH_PAT}}
-          publish_dir: .
+          github_token: ${{ secrets.GH_PAT }}
+          publish_dir: build/prod
           publish_branch: gh-pages
           destination_dir: ''
+          keep_files: true
