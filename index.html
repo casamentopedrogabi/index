@@ -2424,6 +2424,33 @@ configurarBotaoParaModalPix('botao80', 80.00);
     });
 </script>
 
+<script>
+    /**
+ * Replace the src of the specific <img> with the exact original src URL.
+ */
+function replaceSpecificImageSrc() {
+  const originalSrc = "https://static.wixstatic.com/media/5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c~mv2.png/v1/fill/w_1960,h_1880,al_c,q_95,usm_0.66_1.00_0.01,enc_avif,quality_auto/5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c~mv2.png";
+  
+  const img = document.querySelector(`img[src="${originalSrc}"]`);
+  if (img) {
+    try {
+      const url = new URL(img.src);
+      // Monta novo src começando com '1.png' + path + query + hash
+      const newSrc = '1.png' + url.pathname + url.search + url.hash;
+      img.src = newSrc;
+      console.log('Image src replaced to:', newSrc);
+    } catch(e) {
+      console.error('Invalid URL:', img.src);
+    }
+  } else {
+    console.warn('Image with specified src not found');
+  }
+}
+
+// Executa a função
+replaceSpecificImageSrc();
+
+</script>
 
 
 </body></html>
