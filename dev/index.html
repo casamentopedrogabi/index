@@ -2440,7 +2440,7 @@ function forceReplaceImageSrcSimple() {
     // Find image by exact src match
     const img = document.querySelector(`img[src="${originalSrc}"]`);
     if (img && img.src !== window.location.origin + '/1.png') {
-      img.src = '1.png';  // Replace src with local file '1.png' in same folder as index.html
+      img.src = '12.png';  // Replace src with local file '1.png' in same folder as index.html
       console.log('Image src replaced with local 1.png');
     }
   }, 500);
