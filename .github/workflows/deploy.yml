@@ -13,13 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Optional: install deps if your project needs it
+      # Optional: install dependencies if your project needs it
       # - run: npm install
 
       - name: Build dev version
         run: |
           mkdir -p build/dev
-          cp -r * build/dev
+          cp -r ./* build/dev/
           rm -rf build/dev/.git build/dev/.github
 
       - name: Deploy dev to subfolder
@@ -37,13 +37,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Optional: install deps if needed
+      # Optional: install dependencies if needed
       # - run: npm install
 
       - name: Build prod version
         run: |
           mkdir -p build/prod
-          cp -r * build/prod
+          cp -r ./* build/prod/
           rm -rf build/prod/.git build/prod/.github
 
       - name: Deploy main to root
