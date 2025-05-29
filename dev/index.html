@@ -2443,43 +2443,23 @@ configurarBotaoParaModalPix('botao80', 80.00);
 <script>
 (function () {
   const TARGET_SRC_FRAGMENT = '5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c';
-  const IMG_WIDTH = '980px';
-  const IMG_HEIGHT = '940px';
-  const WRAPPER_HEIGHT = '846px'; // 90% de 940px
+  const DESIRED_TRANSFORM = 'translateY(-10%)';
 
-  function patchImage(img) {
-    if (img.dataset.processed === 'true') return;
-
-    img.dataset.processed = 'true';
-
-    // Cria wrapper
-    const wrapper = document.createElement('div');
-    wrapper.style.width = IMG_WIDTH;
-    wrapper.style.height = WRAPPER_HEIGHT;
-    wrapper.style.overflow = 'hidden';
-    wrapper.style.position = 'relative';
-
-    // Estiliza imagem
-    img.style.width = IMG_WIDTH;
-    img.style.height = IMG_HEIGHT;
-    img.style.objectFit = 'cover';
-    img.style.transform = 'translateY(-10%)';
-
-    // Substitui no DOM
-    img.parentNode.insertBefore(wrapper, img);
-    wrapper.appendChild(img);
-
-    console.log('[HeinekenHack] Imagem estilizada e envolvida.');
-  }
-
-  function scanAndPatch() {
+  function adjustImageTransform() {
     const imgs = document.querySelectorAll(`img[src*="${TARGET_SRC_FRAGMENT}"]`);
-    imgs.forEach(patchImage);
+
+    imgs.forEach(img => {
+      const alreadySet = img.style.transform === DESIRED_TRANSFORM;
+      if (!alreadySet) {
+        img.style.transform = DESIRED_TRANSFORM;
+        console.log('[HeinekenFix] Aplicado transform: translateY(-10%)');
+      }
+    });
   }
 
-  // Escuta mutações no DOM
+  // Monitorar mudanças no DOM (caso Wix reescreva novamente)
   const observer = new MutationObserver(() => {
-    scanAndPatch();
+    adjustImageTransform();
   });
 
   observer.observe(document.body, {
@@ -2487,10 +2467,13 @@ configurarBotaoParaModalPix('botao80', 80.00);
     subtree: true,
   });
 
-  // Também roda uma vez no início (caso já esteja presente)
-  window.addEventListener('load', scanAndPatch);
+  // Primeira tentativa após o carregamento da página
+  window.addEventListener('load', () => {
+    setTimeout(adjustImageTransform, 100); // pequeno delay pro Wix terminar
+  });
 })();
 </script>
+
 
 
 </body></html>
