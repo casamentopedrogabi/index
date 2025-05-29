@@ -2445,21 +2445,39 @@ configurarBotaoParaModalPix('botao80', 80.00);
   const TARGET_SRC_FRAGMENT = '5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c';
   const DESIRED_TRANSFORM = 'translateY(-10%)';
 
-  // Função que aplica o estilo na imagem desejada
-  function applyImageFix() {
-    const imgs = document.querySelectorAll(`img[src*="${TARGET_SRC_FRAGMENT}"]`);
+  function fixImagePosition(img) {
+    if (!img || img.getAttribute('data-fixed') === 'true') return;
 
+    // Força os estilos diretamente
+    img.style.transform = DESIRED_TRANSFORM;
+    img.style.objectPosition = '50% 50%'; // manter centralizado horizontalmente
+    img.setAttribute('data-fixed', 'true'); // evitar reaplicar à toa
+
+    console.log('[HeinekenFix] Image transform applied.');
+  }
+
+  function scanAndFix() {
+    const imgs = document.querySelectorAll(`img[src*="${TARGET_SRC_FRAGMENT}"]`);
     imgs.forEach(img => {
-      if (img && img.style.transform !== DESIRED_TRANSFORM) {
-        img.style.transform = DESIRED_TRANSFORM;
-        console.log('[HeinekenFix] Transform applied!');
+      if (img.style.transform !== DESIRED_TRANSFORM) {
+        fixImagePosition(img);
       }
     });
   }
 
-  // Inicia um observer que vigia todo o body
-  const observer = new MutationObserver(() => {
-    applyImageFix();
+  // Observer que detecta mudanças em todo o body
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType === 1) {
+          const imgs = node.querySelectorAll?.(`img[src*="${TARGET_SRC_FRAGMENT}"]`) || [];
+          imgs.forEach(fixImagePosition);
+        }
+      });
+    }
+
+    // Revalida a cada mutação também
+    scanAndFix();
   });
 
   // Começa a observar mudanças no DOM
@@ -2468,12 +2486,13 @@ configurarBotaoParaModalPix('botao80', 80.00);
     subtree: true,
   });
 
-  // Também tenta aplicar no carregamento inicial
-  window.addEventListener('load', () => {
-    // Pequeno atraso garante que o Wix terminou
-    setTimeout(applyImageFix, 500);
-  });
+  // Aplica de novo periodicamente (failsafe)
+  setInterval(scanAndFix, 1000);
 
+  // Primeira tentativa pós-load
+  window.addEventListener('load', () => {
+    setTimeout(scanAndFix, 1000); // espera o Wix injetar
+  });
 })();
 </script>
 
