@@ -295,27 +295,39 @@
 <!-- Overriding Globals JS  -->
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
-  // Seleciona a imagem original
-  const originalImg = document.querySelector('img[src*="5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c"]');
+const observer = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    for (const node of mutation.addedNodes) {
+      if (
+        node.tagName === 'IMG' &&
+        node.src.includes('5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c')
+      ) {
+        // Cria o wrapper
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '980px';
+        wrapper.style.height = '846px'; // 90% de 940px
+        wrapper.style.overflow = 'hidden';
+        wrapper.style.position = 'relative';
 
-  if (!originalImg) return;
+        // Aplica o estilo na imagem
+        node.style.transform = 'translateY(-10%)';
 
-  // Cria o wrapper <div>
-  const wrapper = document.createElement('div');
-  wrapper.style.width = '980px';
-  wrapper.style.height = '846px'; // 90% de 940px
-  wrapper.style.overflow = 'hidden';
-  wrapper.style.position = 'relative';
+        // Insere o wrapper no DOM antes da imagem
+        node.parentNode.insertBefore(wrapper, node);
+        wrapper.appendChild(node);
 
-  // Aplica o transform na imagem
-  originalImg.style.transform = 'translateY(-10%)';
+        // Depois de processar, não precisamos mais observar
+        observer.disconnect();
+        return;
+      }
+    }
+  }
+});
 
-  // Insere o wrapper no DOM antes da imagem
-  originalImg.parentNode.insertBefore(wrapper, originalImg);
-
-  // Move a imagem para dentro do wrapper
-  wrapper.appendChild(originalImg);
+// Inicia o observer no body
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
 });
 </script>
 
