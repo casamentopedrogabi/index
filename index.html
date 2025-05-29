@@ -2445,34 +2445,38 @@ configurarBotaoParaModalPix('botao80', 80.00);
   const TARGET_SRC_FRAGMENT = '5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c';
   const DESIRED_TRANSFORM = 'translateY(-10%)';
 
-  function adjustImageTransform() {
+  // Função que aplica o estilo na imagem desejada
+  function applyImageFix() {
     const imgs = document.querySelectorAll(`img[src*="${TARGET_SRC_FRAGMENT}"]`);
 
     imgs.forEach(img => {
-      const alreadySet = img.style.transform === DESIRED_TRANSFORM;
-      if (!alreadySet) {
+      if (img && img.style.transform !== DESIRED_TRANSFORM) {
         img.style.transform = DESIRED_TRANSFORM;
-        console.log('[HeinekenFix] Aplicado transform: translateY(-10%)');
+        console.log('[HeinekenFix] Transform applied!');
       }
     });
   }
 
-  // Monitorar mudanças no DOM (caso Wix reescreva novamente)
+  // Inicia um observer que vigia todo o body
   const observer = new MutationObserver(() => {
-    adjustImageTransform();
+    applyImageFix();
   });
 
+  // Começa a observar mudanças no DOM
   observer.observe(document.body, {
     childList: true,
     subtree: true,
   });
 
-  // Primeira tentativa após o carregamento da página
+  // Também tenta aplicar no carregamento inicial
   window.addEventListener('load', () => {
-    setTimeout(adjustImageTransform, 100); // pequeno delay pro Wix terminar
+    // Pequeno atraso garante que o Wix terminou
+    setTimeout(applyImageFix, 500);
   });
+
 })();
 </script>
+
 
 
 
