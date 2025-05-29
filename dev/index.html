@@ -2441,40 +2441,56 @@ configurarBotaoParaModalPix('botao80', 80.00);
 </script>
 
 <script>
-const observer = new MutationObserver((mutationsList) => {
-  for (const mutation of mutationsList) {
-    for (const node of mutation.addedNodes) {
-      if (
-        node.tagName === 'IMG' &&
-        node.src.includes('5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c')
-      ) {
-        // Cria o wrapper
-        const wrapper = document.createElement('div');
-        wrapper.style.width = '980px';
-        wrapper.style.height = '846px'; // 90% de 940px
-        wrapper.style.overflow = 'hidden';
-        wrapper.style.position = 'relative';
+(function () {
+  const TARGET_SRC_FRAGMENT = '5fae27_f99dbc4fb98e4ca499eaa6ff9945e92c';
+  const IMG_WIDTH = '980px';
+  const IMG_HEIGHT = '940px';
+  const WRAPPER_HEIGHT = '846px'; // 90% de 940px
 
-        // Aplica o estilo na imagem
-        node.style.transform = 'translateY(-10%)';
+  function patchImage(img) {
+    if (img.dataset.processed === 'true') return;
 
-        // Insere o wrapper no DOM antes da imagem
-        node.parentNode.insertBefore(wrapper, node);
-        wrapper.appendChild(node);
+    img.dataset.processed = 'true';
 
-        // Depois de processar, não precisamos mais observar
-        observer.disconnect();
-        return;
-      }
-    }
+    // Cria wrapper
+    const wrapper = document.createElement('div');
+    wrapper.style.width = IMG_WIDTH;
+    wrapper.style.height = WRAPPER_HEIGHT;
+    wrapper.style.overflow = 'hidden';
+    wrapper.style.position = 'relative';
+
+    // Estiliza imagem
+    img.style.width = IMG_WIDTH;
+    img.style.height = IMG_HEIGHT;
+    img.style.objectFit = 'cover';
+    img.style.transform = 'translateY(-10%)';
+
+    // Substitui no DOM
+    img.parentNode.insertBefore(wrapper, img);
+    wrapper.appendChild(img);
+
+    console.log('[HeinekenHack] Imagem estilizada e envolvida.');
   }
-});
 
-// Inicia o observer no body
-observer.observe(document.body, {
-  childList: true,
-  subtree: true,
-});
+  function scanAndPatch() {
+    const imgs = document.querySelectorAll(`img[src*="${TARGET_SRC_FRAGMENT}"]`);
+    imgs.forEach(patchImage);
+  }
+
+  // Escuta mutações no DOM
+  const observer = new MutationObserver(() => {
+    scanAndPatch();
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+
+  // Também roda uma vez no início (caso já esteja presente)
+  window.addEventListener('load', scanAndPatch);
+})();
 </script>
+
 
 </body></html>
