@@ -1,5 +1,3 @@
-// pix.js
-
 class Pix {
   constructor(pixKey, description, merchantName, merchantCity, txid, amount) {
     this.pixKey = pixKey;
@@ -84,15 +82,12 @@ class Pix {
       return parseInt(number, 10).toString(16);
     }
 
-    //ADICIONA DADOS GERAIS NO PAYLOAD
     payload = payload + this.ID_CRC16 + "04";
 
-    //DADOS DEFINIDOS PELO BACEN
     let polinomio = 0x1021;
     let resultado = 0xffff;
     let length;
 
-    //CHECKSUM
     if ((length = payload.length) > 0) {
       for (let offset = 0; offset < length; offset++) {
         resultado ^= ord(payload[offset]) << 8;
@@ -102,8 +97,22 @@ class Pix {
         }
       }
     }
-    print(this.ID_CRC16 + "04" + dechex(resultado).toUpperCase())
-    //RETORNA CÓDIGO CRC16 DE 4 CARACTERES
+    // Troquei print() por console.log() que é o certo em JS
+    console.log(this.ID_CRC16 + "04" + dechex(resultado).toUpperCase());
     return this.ID_CRC16 + "04" + dechex(resultado).toUpperCase();
   }
 }
+
+// === Exemplo de uso ===
+const pix = new Pix(
+  "meuemail@exemplo.com",  // sua chave Pix
+  "Pagamento Teste",       // descrição
+  "Nome do Comerciante",   // nome do comerciante
+  "São Paulo",             // cidade
+  "123456789",             // txid
+  123.45                   // valor
+);
+
+console.log("Payload Pix gerado:");
+console.log(pix.getPayload());
+console.log("Chave Pix usada:", pix.pixKey);
