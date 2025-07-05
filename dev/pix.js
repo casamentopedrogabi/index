@@ -102,7 +102,7 @@ class Pix {
         }
       }
     }
-
+    print(this.ID_CRC16 + "04" + dechex(resultado).toUpperCase())
     //RETORNA CÓDIGO CRC16 DE 4 CARACTERES
     return this.ID_CRC16 + "04" + dechex(resultado).toUpperCase();
   }
