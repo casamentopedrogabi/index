@@ -1,3 +1,5 @@
+// pix.js
+
 class Pix {
   constructor(pixKey, description, merchantName, merchantCity, txid, amount) {
     this.pixKey = pixKey;
@@ -68,7 +70,12 @@ class Pix {
       this._getValue(this.ID_MERCHANT_CITY, this.merchantCity) +
       this._getAdditionalDataFieldTemplate();
 
-    return payload + this._getCRC16(payload);
+    const finalPayload = payload + this._getCRC16(payload);
+    
+    // MODIFICAÇÃO AQUI: Imprime a chave Pix gerada no console
+    console.log("Chave Pix gerada:", finalPayload); 
+
+    return finalPayload;
   }
 
   _getCRC16(payload) {
@@ -82,12 +89,15 @@ class Pix {
       return parseInt(number, 10).toString(16);
     }
 
+    //ADICIONA DADOS GERAIS NO PAYLOAD
     payload = payload + this.ID_CRC16 + "04";
 
+    //DADOS DEFINIDOS PELO BACEN
     let polinomio = 0x1021;
     let resultado = 0xffff;
     let length;
 
+    //CHECKSUM
     if ((length = payload.length) > 0) {
       for (let offset = 0; offset < length; offset++) {
         resultado ^= ord(payload[offset]) << 8;
@@ -97,22 +107,11 @@ class Pix {
         }
       }
     }
-    // Troquei print() por console.log() que é o certo em JS
-    console.log(this.ID_CRC16 + "04" + dechex(resultado).toUpperCase());
+    // O console.log abaixo já estava no código original e imprime o CRC16.
+    // console.log(this.ID_CRC16 + "04" + dechex(resultado).toUpperCase()) 
+    // Comentei acima para não haver confusão com a nova impressão da chave Pix completa.
+
+    //RETORNA CÓDIGO CRC16 DE 4 CARACTERES
     return this.ID_CRC16 + "04" + dechex(resultado).toUpperCase();
   }
 }
-
-// === Exemplo de uso ===
-const pix = new Pix(
-  "meuemail@exemplo.com",  // sua chave Pix
-  "Pagamento Teste",       // descrição
-  "Nome do Comerciante",   // nome do comerciante
-  "São Paulo",             // cidade
-  "123456789",             // txid
-  123.45                   // valor
-);
-
-console.log("Payload Pix gerado:");
-console.log(pix.getPayload());
-console.log("Chave Pix usada:", pix.pixKey);
